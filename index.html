@@ -3,37 +3,96 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex,nofollow" />
-
-  <title>Estrellitas del Curso - Plataforma de Alumnos</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap"
-    rel="stylesheet"
-  />
-
+  <title>Estrellitas del Curso - Plataforma</title>
   <style>
     :root {
       --bg: #fff8ed;
-      --card: rgba(255, 255, 255, 0.9);
-      --ink: #3b2a20;
-      --muted: #7c6a5e;
-      --gold: #ffc83d;
-      --line: rgba(105, 76, 52, 0.13);
-      --red: #b84b4b;
-      --green: #398552;
-      --shadow: 0 14px 38px rgba(117, 76, 37, 0.11);
-      --radius: 24px;
-      --max: 1050px;
+      --card: #ffffff;
+      --accent: #ffb703;
+      --primary: #fb8500;
+      --text: #2b2d42;
     }
-
-    * { box-sizing: border-box; }
     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       margin: 0;
-      color: var(--ink);
-      font-family: "Nunito", sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      color: var(--primary);
+    }
+    .login-box, .admin-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ffe3a8;
+      border-radius: 10px;
+      background: #fffdf9;
+    }
+    input[type="password"], input[type="text"] {
+      padding: 10px;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 18px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #d97000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⭐ Tabla de Estrellitas ⭐</h1>
+    <p style="text-align:center;">¡Sigue acumulando puntos y estrellitas!</p>
+
+    <div id="login-panel" class="login-box">
+      <h3>Acceso de Administrador</h3>
+      <input type="password" id="admin-pass" placeholder="Ingresa la contraseña" />
+      <button onclick="verificarAdmin()">Entrar</button>
+    </div>
+
+    <div id="admin-controls" class="admin-box" style="display:none;">
+      <h3>Panel de Control Activado</h3>
+      <p>¡Bienvenida, Administradora!</p>
+      <!-- Aquí van los controles para añadir/quitar estrellitas -->
+    </div>
+  </div>
+
+  <script>
+    function verificarAdmin() {
+      var passInput = document.getElementById("admin-pass").value;
+      // Normaliza espacios y comillas
+      var cleanPass = passInput.trim().replace(/[‘’'"]/g, "");
+      
+      if (cleanPass === "admin123") {
+        document.getElementById("login-panel").style.display = "none";
+        document.getElementById("admin-controls").style.display = "block";
+        alert("¡Acceso concedido!");
+      } else {
+        alert("Contraseña incorrecta. Intenta de nuevo.");
+      }
+    }
+  </script>
+</body>
+</html>
       background: linear-gradient(180deg, #fffaf3, #fff4e3 55%, #fff9ef);
       min-height: 100vh;
     }
