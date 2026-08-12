@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <title>Estrellitas del Curso - Plataforma de Alumnos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg: #fff8ed;
+      --card: rgba(255, 255, 255, 0.9);
+      --ink: #3b2a20;
+      --muted: #7c6a5e;
+      --gold: #ffc83d;
+      --line: rgba(105, 76, 52, 0.13);
+      --red: #b84b4b;
+      --green: #398552;
+      --shadow: 0 14px 38px rgba(117, 76, 37, 0.11);
+      --radius: 24px;
+      --max: 1050px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Nunito", sans-serif;
+      background: linear-gradient(180deg, #fffaf3, #fff4e3 55%, #fff9ef);
+      min-height: 100vh;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .shell { width: min(calc(100% - 28px), var(--max)); margin: auto; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 55px; height: 55px; border-radius: 18px;
+      display: grid; place-items: center; font-size: 27px;
+      background: linear-gradient(145deg, #ffda65, #ffae45);
+    }
+    .brand h1 { margin: 0; font: 800 1.45rem/1 "Baloo 2", cursive; }
+
+    .admin-open {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 999px; padding: 10px 15px; font-weight: 800;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .hidden { display: none !important; }
+
+    .btn {
+      min-height: 50px; border: 0; border-radius: 16px; padding: 0 18px;
+      font-weight: 800; display: inline-flex; align-items: center;
+      justify-content: center; gap: 8px; transition: transform 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .primary { background: linear-gradient(135deg, #ffce55, #ffad45); color: #5b350f; }
+    .secondary { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+    .full { width: 100%; }
+
+    .welcome { text-align: center; padding: 30px 24px; }
+    .welcome h2 { font: 800 clamp(2rem, 5vw, 3.5rem)/1 "Baloo 2", cursive; margin: 10px 0; }
+
+    .access { max-width: 500px; margin: 0 auto 35px; }
+    label { display: block; font-weight: 800; margin-bottom: 7px; }
+    input[type="text"], input[type="password"] {
+      width: 100%; min-height: 52px; border: 1px solid var(--line);
+      border-radius: 16px; background: #fffdfa; padding: 0 15px; margin-bottom: 15px;
+    }
+
+    .student-top { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+    .student-name { font: 800 2rem / 1 "Baloo 2", cursive; }
+    .stars-box {
+      min-width: 150px; text-align: center; padding: 15px; border-radius: 20px;
+      background: linear-gradient(145deg, #fff2b8, #ffe5a0);
+    }
+    .stars-box strong { display: block; font: 800 2.5rem / 1 "Baloo 2", cursive; color: #8b5c12; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 50; display: none; place-items: center;
+      background: rgba(48, 32, 22, 0.42); backdrop-filter: blur(5px);
+    }
+    .modal-backdrop.open { display: grid; }
+    .modal { width: min(100%, 420px); background: #fffdf9; border-radius: 24px; padding: 25px; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 20px; z-index: 100;
+      transform: translate(-50%, 25px); opacity: 0; pointer-events: none;
+      background: #3a2a20; color: white; padding: 13px 17px; border-radius: 15px;
+      font-weight: 800; transition: 0.25s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
+</head>
+
+<body>
+
+<div class="shell">
+  <header>
+    <div class="brand">
+      <div class="logo">⭐</div>
+      <div>
+        <h1>Estrellitas del Curso</h1>
+        <p>Plataforma Oficial de Alumnos</p>
+      </div>
+    </div>
+    <button class="admin-open" id="openAdmin" type="button">🔐 Administrador</button>
+  </header>
+
+  <main id="studentView">
+    <section class="card welcome">
+      <h2>¡Bienvenido/a al Curso!</h2>
+      <p>Ingresa tu código de inscripción para acceder a tus actividades.</p>
+    </section>
+
+    <!-- FORMULARIO DE INGRESO ALUMNO -->
+    <section class="card access" id="accessCard">
+      <h3>Acceso Alumnos</h3>
+      <p style="color:var(--muted); font-size: 0.9rem;">Escribe tu ID de Transacción recibido en tu compra para ingresar.</p>
+      
+      <form id="studentLoginForm">
+        <label for="studentCode">ID de Transacción (PIN)</label>
+        <input id="studentCode" type="text" placeholder="Ej: HP12345678" required>
+        <button class="btn primary full" type="submit">✨ Ingresar</button>
+      </form>
+    </section>
+
+    <!-- ÁREA DEL ALUMNO (OCULTA HASTA VALIDAR) -->
+    <section id="studentArea" class="hidden">
+      <div class="card student-top">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="student-name" id="studentNickname">Estudiante</div>
+            <button class="btn secondary" id="editNicknameBtn" style="min-height:30px; padding:0 8px; font-size:0.8rem;">✏️ Cambiar apodo</button>
+          </div>
+          <div style="color: var(--muted); margin-top: 5px;" id="studentCodeDisplay">PIN: -</div>
+        </div>
+
+        <div class="stars-box">
+          <strong id="studentStars">0 ⭐</strong>
+          <span>estrellas</span>
+        </div>
+      </div>
+
+      <button class="btn secondary" id="changeStudent" type="button">Salir / Cambiar cuenta</button>
+    </section>
+  </main>
+
+  <!-- VISTA ADMIN -->
+  <main id="adminView" class="hidden">
+    <section class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2>🔐 Panel Administrador</h2>
+        <button class="btn secondary" id="backStudent">← Volver</button>
+      </div>
+
+      <!-- SECCIÓN AÑADIR PINS -->
+      <h3>Autorización de Inscripciones</h3>
+      <p style="color:var(--muted); font-size: 0.85rem;">Registra los PINs autorizados para permitir el acceso a los estudiantes:</p>
+
+      <form id="addWhitelistForm" style="display:flex; gap:10px; margin-bottom:20px;">
+        <input id="newPin" type="text" placeholder="Ej: HP99988877" style="margin-bottom:0;" required>
+        <input id="newName" type="text" placeholder="Nombre Alumno (Opcional)" style="margin-bottom:0;">
+        <button class="btn primary" type="submit" style="white-space:nowrap;">➕ Autorizar PIN</button>
+      </form>
+
+      <hr style="border:0; border-top:1px solid var(--line); margin:20px 0;">
+
+      <h3>Inscripciones Activas</h3>
+      <div id="whitelistDisplay" style="max-height: 180px; overflow-y:auto; font-size:0.9rem; margin-bottom:25px;"></div>
+
+      <hr style="border:0; border-top:1px solid var(--line); margin:20px 0;">
+
+      <!-- SECCIÓN CAMBIAR CONTRASEÑA ADMIN -->
+      <h3>🔑 Cambiar Contraseña del Administrador</h3>
+      <form id="changeAdminPasswordForm" style="max-width: 400px;">
+        <label for="newAdminPass">Nueva Contraseña</label>
+        <input id="newAdminPass" type="password" placeholder="Escribe la nueva contraseña" required>
+        <button class="btn primary" type="submit">Actualizar Contraseña</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<!-- MODAL LOGIN ADMIN -->
+<div class="modal-backdrop" id="adminModal">
+  <div class="modal">
+    <h3>Acceso Administrador</h3>
+    <form id="adminLoginForm">
+      <label for="adminPassword">Contraseña</label>
+      <input id="adminPassword" type="password" required>
+      <button class="btn primary full" type="submit">Entrar</button>
+      <button class="btn secondary full" type="button" id="closeAdmin" style="margin-top:8px;">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- SDKs DE FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA4PLOfGb-l99wQFqOr5vsL15CNN4m8RWk",
+    authDomain: "estrellitas-floppy-hotmart.firebaseapp.com",
+    projectId: "estrellitas-floppy-hotmart",
+    storageBucket: "estrellitas-floppy-hotmart.firebasestorage.app",
+    messagingSenderId: "338952338094",
+    appId: "1:338952338094:web:6bc85c8728dc3ea90f0b3f",
+    measurementId: "G-RFD7WQG4VZ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const $ = selector => document.querySelector(selector);
+  const studentLoginForm = $("#studentLoginForm");
+  const studentCode = $("#studentCode");
+  const accessCard = $("#accessCard");
+  const studentArea = $("#studentArea");
+  const studentNickname = $("#studentNickname");
+  const studentCodeDisplay = $("#studentCodeDisplay");
+  const studentStars = $("#studentStars");
+  const toast = $("#toast");
+  const adminModal = $("#adminModal");
+
+  let currentStudentData = null;
+  const DEFAULT_ADMIN_PASS = "admin123";
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
+  }
+
+  // Lectura desde la URL
+  window.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pinParam = urlParams.get('pin') || urlParams.get('transaction');
+    const nameParam = urlParams.get('name');
+
+    if (pinParam) {
+      const cleanPin = pinParam.trim().toUpperCase();
+      studentCode.value = cleanPin;
+      validateAndLogin(cleanPin, nameParam);
+    }
+  });
+
+  // Validación de estudiante
+  async function validateAndLogin(pin, urlProvidedName = null) {
+    showToast("🔍 Validando credenciales...");
+
+    try {
+      const whitelistRef = doc(db, "whitelist", pin);
+      const whitelistSnap = await getDoc(whitelistRef);
+
+      if (!whitelistSnap.exists()) {
+        showToast("❌ Acceso Denegado: Código no registrado.");
+        return;
+      }
+
+      const studentRef = doc(db, "students", pin);
+      const studentSnap = await getDoc(studentRef);
+
+      if (studentSnap.exists()) {
+        currentStudentData = studentSnap.data();
+      } else {
+        let nameToUse = urlProvidedName || whitelistSnap.data().name;
+        if (!nameToUse) {
+          nameToUse = prompt("¡Bienvenido/a! Escribe tu apodo para el ranking:") || `Alumno ${pin.slice(-4)}`;
+        }
+
+        currentStudentData = {
+          code: pin,
+          nickname: nameToUse,
+          stars: 0,
+          delivered: []
+        };
+        await setDoc(studentRef, currentStudentData);
+      }
+
+      accessCard.classList.add("hidden");
+      studentArea.classList.remove("hidden");
+      renderStudentUI();
+      showToast("✨ ¡Bienvenido/a!");
+
+    } catch (error) {
+      console.error(error);
+      showToast("Error de conexión al servidor.");
+    }
+  }
+
+  studentLoginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const pin = studentCode.value.trim().toUpperCase();
+    if (pin) validateAndLogin(pin);
+  });
+
+  function renderStudentUI() {
+    studentNickname.textContent = currentStudentData.nickname;
+    studentCodeDisplay.textContent = `PIN: ${currentStudentData.code}`;
+    studentStars.textContent = `${currentStudentData.stars} ⭐`;
+  }
+
+  $("#editNicknameBtn").addEventListener("click", async () => {
+    const newName = prompt("Nuevo apodo:", currentStudentData.nickname);
+    if (newName && newName.trim()) {
+      currentStudentData.nickname = newName.trim();
+      await updateDoc(doc(db, "students", currentStudentData.code), { nickname: newName.trim() });
+      renderStudentUI();
+      showToast("Apodo actualizado.");
+    }
+  });
+
+  $("#changeStudent").addEventListener("click", () => {
+    currentStudentData = null;
+    studentArea.classList.add("hidden");
+    accessCard.classList.remove("hidden");
+    studentCode.value = "";
+  });
+
+  // --- GESTIÓN DE PANEL ADMINISTRADOR ---
+  $("#openAdmin").addEventListener("click", () => adminModal.classList.add("open"));
+  $("#closeAdmin").addEventListener("click", () => adminModal.classList.remove("open"));
+
+  // Iniciar sesión como Admin
+  $("#adminLoginForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const inputPass = $("#adminPassword").value.trim();
+
+    try {
+      const adminConfigRef = doc(db, "settings", "adminConfig");
+      const adminConfigSnap = await getDoc(adminConfigRef);
+      
+      let validPassword = DEFAULT_ADMIN_PASS;
+
+      if (adminConfigSnap.exists()) {
+        validPassword = adminConfigSnap.data().password;
+      }
+
+      if (inputPass === validPassword) {
+        adminModal.classList.remove("open");
+        $("#studentView").classList.add("hidden");
+        $("#adminView").classList.remove("hidden");
+        $("#adminPassword").value = "";
+        loadWhitelistDisplay();
+      } else {
+        showToast("❌ Contraseña incorrecta.");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("Error al verificar la contraseña.");
+    }
+  });
+
+  // Cambiar contraseña de Admin
+  $("#changeAdminPasswordForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const newPass = $("#newAdminPass").value.trim();
+
+    if (newPass) {
+      try {
+        await setDoc(doc(db, "settings", "adminConfig"), { password: newPass }, { merge: true });
+        showToast("🔑 ¡Contraseña actualizada con éxito!");
+        $("#newAdminPass").value = "";
+      } catch (error) {
+        console.error(error);
+        showToast("Error al guardar la nueva contraseña.");
+      }
+    }
+  });
+
+  $("#backStudent").addEventListener("click", () => {
+    $("#adminView").classList.add("hidden");
+    $("#studentView").classList.remove("hidden");
+  });
+
+  $("#addWhitelistForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const pin = $("#newPin").value.trim().toUpperCase();
+    const name = $("#newName").value.trim();
+
+    if (pin) {
+      await setDoc(doc(db, "whitelist", pin), {
+        status: "APPROVED",
+        name: name || "Alumno Autorizado",
+        createdAt: new Date().toISOString()
+      });
+      showToast(`PIN ${pin} autorizado.`);
+      $("#newPin").value = "";
+      $("#newName").value = "";
+      loadWhitelistDisplay();
+    }
+  });
+
+  async function loadWhitelistDisplay() {
+    const display = $("#whitelistDisplay");
+    display.innerHTML = "Cargando registros...";
+    const querySnapshot = await getDocs(collection(db, "whitelist"));
+    display.innerHTML = "";
+    querySnapshot.forEach((doc) => {
+      display.innerHTML += `<div>🟢 <strong>${doc.id}</strong> - ${doc.data().name}</div>`;
+    });
+  }
+</script>
+
+</body>
+</html>
