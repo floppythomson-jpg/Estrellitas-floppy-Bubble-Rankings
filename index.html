@@ -30,11 +30,95 @@
     h1 {
       text-align: center;
       color: var(--primary);
+      margin-bottom: 5px;
     }
-    .login-box, .admin-box {
+    .subtitle {
+      text-align: center;
+      color: #6c757d;
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+    .box {
       margin-top: 20px;
-      padding: 15px;
+      padding: 20px;
       border: 1px solid #ffe3a8;
+      border-radius: 12px;
+      background: #fffdf9;
+    }
+    input[type="password"], input[type="text"] {
+      padding: 12px;
+      width: calc(100% - 26px);
+      max-width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 20px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #d97000;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⭐ Tabla de Estrellitas ⭐</h1>
+    <p class="subtitle">¡Plataforma Oficial de Rankings y Puntos!</p>
+
+    <!-- ACCESO ADMINISTRADOR -->
+    <div id="login-panel" class="box">
+      <h3>Acceso de Administrador</h3>
+      <p>Ingresa tu contraseña para gestionar las estrellas:</p>
+      <input type="password" id="admin-pass" placeholder="Escribe la clave aquí" />
+      <br>
+      <button onclick="verificarAdmin()">Entrar al Panel</button>
+    </div>
+
+    <!-- PANEL DE CONTROL (Oculto al inicio) -->
+    <div id="admin-controls" class="box hidden">
+      <h3>👑 Panel de Administración</h3>
+      <p>¡Bienvenida al sistema de control!</p>
+      <hr style="border: 0; border-top: 1px solid #ffe3a8; margin: 15px 0;">
+      <p>Aquí podrás autorizar PINs de alumnos y asignar las estrellas correspondientes.</p>
+      <button onclick="cerrarSesion()" style="background-color: #6c757d;">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <script>
+    function verificarAdmin() {
+      var passInput = document.getElementById("admin-pass").value;
+      // Normaliza espacios y remueve comillas raras de teclados móviles
+      var cleanPass = passInput.trim().replace(/[‘’'"]/g, "");
+      
+      if (cleanPass === "admin123") {
+        document.getElementById("login-panel").classList.add("hidden");
+        document.getElementById("admin-controls").classList.remove("hidden");
+        alert("¡Acceso concedido!");
+      } else {
+        alert("Contraseña incorrecta. Intenta con: admin123");
+      }
+    }
+
+    function cerrarSesion() {
+      document.getElementById("admin-controls").classList.add("hidden");
+      document.getElementById("login-panel").classList.remove("hidden");
+      document.getElementById("admin-pass").value = "";
+    }
+  </script>
+</body>
+</html>      border: 1px solid #ffe3a8;
       border-radius: 10px;
       background: #fffdf9;
     }
