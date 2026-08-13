@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Estrellitas del Curso - Plataforma</title>
+  <title>Estrellitas del Curso - Plataforma Oficial</title>
+  
+  <!-- CONEXIÓN A SUPABASE (AUTOMATIZACIÓN HOTMART) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --bg: #fff8ed;
@@ -11,111 +15,498 @@
       --accent: #ffb703;
       --primary: #fb8500;
       --text: #2b2d42;
+      --line: #ffe3a8;
+      --green: #2a9d8f;
+      --danger: #e63946;
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
+      background: linear-gradient(180deg, #fffaf3, #fff4e3 55%, #fff9ef);
       color: var(--text);
       margin: 0;
-      padding: 20px;
+      padding: 15px;
+      min-height: 100vh;
     }
     .container {
       max-width: 800px;
       margin: 0 auto;
       background: var(--card);
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid var(--line);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #ffda65, #ffae45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
     }
     h1 {
-      text-align: center;
+      margin: 0;
       color: var(--primary);
-      margin-bottom: 5px;
+      font-size: 1.4rem;
     }
     .subtitle {
-      text-align: center;
       color: #6c757d;
-      margin-top: 0;
-      margin-bottom: 25px;
+      font-size: 0.85rem;
+      margin: 2px 0 0 0;
     }
     .box {
       margin-top: 20px;
-      padding: 20px;
-      border: 1px solid #ffe3a8;
-      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
       background: #fffdf9;
     }
-    input[type="password"], input[type="text"] {
-      padding: 12px;
-      width: calc(100% - 26px);
-      max-width: 300px;
+    h2, h3 {
+      color: var(--primary);
+      margin-top: 0;
+    }
+    input[type="password"], input[type="text"], input[type="number"], textarea {
+      padding: 10px;
+      width: 100%;
       border: 1px solid #ccc;
       border-radius: 8px;
       margin-bottom: 10px;
-      font-size: 16px;
+      font-size: 14px;
+      box-sizing: border-box;
+      font-family: inherit;
     }
     button {
-      padding: 12px 20px;
+      padding: 10px 16px;
       background-color: var(--primary);
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 16px;
+      font-size: 14px;
     }
     button:hover {
       background-color: #d97000;
     }
-    .hidden {
-      display: none;
+    .btn-secondary { background-color: #6c757d; }
+    .btn-secondary:hover { background-color: #5a6268; }
+    .btn-danger { background-color: var(--danger); }
+    .btn-danger:hover { background-color: #c52a36; }
+    .hidden { display: none; }
+    .card-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge {
+      background: #fff3cd;
+      color: #856404;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .status-done {
+      background: #d4edda;
+      color: #155724;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h1>⭐ Tabla de Estrellitas ⭐</h1>
-    <p class="subtitle">¡Plataforma Oficial de Rankings y Puntos!</p>
+    <header>
+      <div class="brand">
+        <div class="logo">⭐</div>
+        <div>
+          <h1>Estrellitas del Curso</h1>
+          <p class="subtitle">Plataforma Oficial de Alumnos</p>
+        </div>
+      </div>
+      <button onclick="mostrarLoginAdmin()" class="btn-secondary" style="font-size: 12px; padding: 7px 10px;">🔑 Administrador</button>
+    </header>
 
-    <!-- ACCESO ADMINISTRADOR -->
-    <div id="login-panel" class="box">
+    <!-- ALUMNOS Y PADRES -->
+    <div id="student-section">
+      <div id="login-student-box" class="box">
+        <h2>¡Bienvenido/a al Curso!</h2>
+        <p>Ingresa tu código de inscripción (ID de transacción de Hotmart) para acceder a tus actividades.</p>
+        <input type="text" id="student-pin" placeholder="Ej: HP12345678" />
+        <br>
+        <button onclick="ingresarAlumno()">✨ Ingresar</button>
+      </div>
+
+      <!-- PERFIL Y TAREAS DEL ESTUDIANTE -->
+      <div id="profile-box" class="box hidden">
+        <div class="flex-between">
+          <div>
+            <h2 style="margin:0;" id="profile-name">Estudiante</h2>
+            <small style="color:#6c757d;">PIN: <span id="profile-pin">-</span></small>
+          </div>
+          <span id="profile-stars" class="badge" style="font-size: 16px;">0 ⭐</span>
+        </div>
+        <br>
+        <button onclick="salirAlumno()" class="btn-secondary" style="font-size:12px;">Salir / Cambiar cuenta</button>
+
+        <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
+
+        <h3>📚 Mis Tareas y Actividades</h3>
+        <div id="student-tasks-list">
+          <p style="color:#6c757d;">No hay tareas asignadas por el momento.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGIN ADMIN -->
+    <div id="admin-login" class="box hidden">
       <h3>Acceso de Administrador</h3>
-      <p>Ingresa tu contraseña para gestionar las estrellas:</p>
-      <input type="password" id="admin-pass" placeholder="Escribe la clave aquí" />
+      <p>Ingresa tu clave para gestionar el curso:</p>
+      <input type="password" id="admin-pass" placeholder="Escribe la contraseña" />
       <br>
-      <button onclick="verificarAdmin()">Entrar al Panel</button>
+      <button onclick="verificarAdmin()">Entrar</button>
+      <button onclick="ocultarLoginAdmin()" class="btn-secondary">Volver</button>
     </div>
 
-    <!-- PANEL DE CONTROL (Oculto al inicio) -->
-    <div id="admin-controls" class="box hidden">
-      <h3>👑 Panel de Administración</h3>
-      <p>¡Bienvenida al sistema de control!</p>
-      <hr style="border: 0; border-top: 1px solid #ffe3a8; margin: 15px 0;">
-      <p>Aquí podrás autorizar PINs de alumnos y asignar las estrellas correspondientes.</p>
-      <button onclick="cerrarSesion()" style="background-color: #6c757d;">Cerrar Sesión</button>
+    <!-- PANEL ADMIN -->
+    <div id="admin-panel" class="box hidden">
+      <div class="flex-between">
+        <h2 style="margin:0;">👑 Panel de Administración</h2>
+        <button onclick="cerrarAdmin()" class="btn-secondary" style="font-size:12px;">Cerrar Sesión</button>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid var(--line); margin: 15px 0;">
+
+      <!-- CREAR TAREA -->
+      <h3>📝 Crear Nueva Tarea</h3>
+      <input type="text" id="task-title" placeholder="Título de la Tarea (Ej: Lectura Floppy Ch. 1)" />
+      <textarea id="task-desc" placeholder="Instrucciones para el alumno..."></textarea>
+      <input type="number" id="task-stars" placeholder="Valor en Estrellas (Ej: 3)" min="1" value="1" />
+      <button onclick="crearTarea()">➕ Asignar Tarea</button>
+
+      <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
+
+      <!-- AUTORIZAR PIN MANUAL (Opcional si falla la red) -->
+      <h3>🔑 Registro Manual de Respuesto</h3>
+      <input type="text" id="new-pin" placeholder="ID Transacción (Ej: HP999)" />
+      <input type="text" id="new-name" placeholder="Nombre del Alumno" />
+      <button onclick="autorizarPinManual()">➕ Autorizar Manualmente</button>
+
+      <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
+
+      <!-- LISTA DE ESTUDIANTES -->
+      <h3>👥 Inscripciones Activas y Estrellas</h3>
+      <div id="students-list"></div>
+
+      <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
+
+      <!-- LISTA DE TAREAS CREADAS -->
+      <h3>📋 Tareas Publicadas</h3>
+      <div id="admin-tasks-list"></div>
+
+      <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
+
+      <!-- CAMBIAR CONTRASEÑA -->
+      <h3>🔑 Cambiar Contraseña del Administrador</h3>
+      <input type="password" id="new-admin-pass" placeholder="Escribe la nueva contraseña" />
+      <button onclick="cambiarClaveAdmin()">Actualizar Contraseña</button>
     </div>
+
   </div>
 
   <script>
+    // ----------------------------------------------------
+    // CONFIGURACIÓN DE SUPABASE (Ingresa tus datos aquí)
+    // ----------------------------------------------------
+    const SUPABASE_URL = "https://TU_PROYECTO.supabase.co";
+    const SUPABASE_KEY = "TU_CLAVE_ANON_O_SERVICE_ROLE";
+    var db = null;
+
+    if (SUPABASE_URL.indexOf("TU_PROYECTO") === -1) {
+      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+
+    // Variables de estado local
+    var adminClaveActual = "admin123";
+    var estudiantesLocal = {};
+    var tareas = [];
+    var alumnoActualPin = null;
+
+    function mostrarLoginAdmin() {
+      document.getElementById("student-section").classList.add("hidden");
+      document.getElementById("admin-login").classList.remove("hidden");
+    }
+
+    function ocultarLoginAdmin() {
+      document.getElementById("admin-login").classList.add("hidden");
+      document.getElementById("student-section").classList.remove("hidden");
+    }
+
     function verificarAdmin() {
       var passInput = document.getElementById("admin-pass").value;
-      // Normaliza espacios y remueve comillas raras de teclados móviles
       var cleanPass = passInput.trim().replace(/[‘’'"]/g, "");
       
-      if (cleanPass === "admin123") {
-        document.getElementById("login-panel").classList.add("hidden");
-        document.getElementById("admin-controls").classList.remove("hidden");
-        alert("¡Acceso concedido!");
+      if (cleanPass === adminClaveActual) {
+        document.getElementById("admin-login").classList.add("hidden");
+        document.getElementById("admin-panel").classList.remove("hidden");
+        alert("¡Acceso concedido al Panel de Control!");
+        actualizarListaAdmin();
+        actualizarTareasAdmin();
       } else {
-        alert("Contraseña incorrecta. Intenta con: admin123");
+        alert("Contraseña incorrecta.");
       }
     }
 
-    function cerrarSesion() {
-      document.getElementById("admin-controls").classList.add("hidden");
-      document.getElementById("login-panel").classList.remove("hidden");
+    function cerrarAdmin() {
+      document.getElementById("admin-panel").classList.add("hidden");
+      document.getElementById("student-section").classList.remove("hidden");
       document.getElementById("admin-pass").value = "";
+    }
+
+    function cambiarClaveAdmin() {
+      var nueva = document.getElementById("new-admin-pass").value.trim().replace(/[‘’'"]/g, "");
+      if (!nueva) {
+        alert("Por favor escribe una nueva contraseña.");
+        return;
+      }
+      adminClaveActual = nueva;
+      alert("¡Contraseña de administrador actualizada con éxito!");
+      document.getElementById("new-admin-pass").value = "";
+    }
+
+    // INGRESO DEL ALUMNO (Conecta a Supabase o cae a Memoria)
+    async function ingresarAlumno() {
+      var pin = document.getElementById("student-pin").value.trim();
+      if (!pin) {
+        alert("Por favor escribe tu código de inscripción.");
+        return;
+      }
+
+      // 1. Consulta en la base de datos de Supabase si está configurada
+      if (db) {
+        try {
+          let { data, error } = await db
+            .from('alumnos_hotmart')
+            .select('*')
+            .eq('pin_transaccion', pin)
+            .single();
+
+          if (data) {
+            estudiantesLocal[pin] = {
+              nombre: data.nombre,
+              estrellas: data.estrellas || 0,
+              tareasEnviadas: {}
+            };
+            cargarVistaAlumno(pin);
+            return;
+          }
+        } catch (e) {
+          console.log("Buscando en respaldo local...");
+        }
+      }
+
+      // 2. Consulta en la base de datos local
+      if (estudiantesLocal[pin]) {
+        cargarVistaAlumno(pin);
+      } else {
+        alert("El PIN no ha sido encontrado. Si acabas de comprar en Hotmart, dale 1-2 minutos a que el sistema procese el pago.");
+      }
+    }
+
+    function cargarVistaAlumno(pin) {
+      alumnoActualPin = pin;
+      document.getElementById("login-student-box").classList.add("hidden");
+      document.getElementById("profile-box").classList.remove("hidden");
+      actualizarPerfilAlumno();
+    }
+
+    function salirAlumno() {
+      alumnoActualPin = null;
+      document.getElementById("profile-box").classList.add("hidden");
+      document.getElementById("login-student-box").classList.remove("hidden");
+      document.getElementById("student-pin").value = "";
+    }
+
+    function actualizarPerfilAlumno() {
+      if (!alumnoActualPin || !estudiantesLocal[alumnoActualPin]) return;
+      var est = estudiantesLocal[alumnoActualPin];
+      document.getElementById("profile-name").innerText = est.nombre;
+      document.getElementById("profile-pin").innerText = alumnoActualPin;
+      document.getElementById("profile-stars").innerText = est.estrellas + " ⭐";
+
+      var container = document.getElementById("student-tasks-list");
+      container.innerHTML = "";
+
+      if (tareas.length === 0) {
+        container.innerHTML = "<p style='color: #6c757d;'>No hay tareas pendientes.</p>";
+        return;
+      }
+
+      tareas.forEach(function(t) {
+        var div = document.createElement("div");
+        div.className = "card-item";
+        var enviada = est.tareasEnviadas[t.id];
+
+        if (enviada) {
+          div.innerHTML = "<div class='flex-between'><strong>" + t.titulo + "</strong><span class='status-done'>✔ Enviada (+" + t.estrellas + " ⭐)</span></div>" +
+                          "<p style='margin:5px 0;'><small>" + t.desc + "</small></p>";
+        } else {
+          div.innerHTML = "<div class='flex-between'><strong>" + t.titulo + "</strong><span class='badge'>" + t.estrellas + " ⭐</span></div>" +
+                          "<p style='margin:5px 0;'><small>" + t.desc + "</small></p>" +
+                          "<div style='margin-top:10px;'><input type='file' accept='image/*,application/pdf' id='file-" + t.id + "' style='font-size:12px;' /><br>" +
+                          "<button onclick=\"entregarTarea(" + t.id + ")\" style='font-size:12px; margin-top:5px;'>Enviar Evidencia (Foto/PDF)</button></div>";
+        }
+        container.appendChild(div);
+      });
+    }
+
+    function entregarTarea(taskId) {
+      var fileInput = document.getElementById("file-" + taskId);
+      if (!fileInput || fileInput.files.length === 0) {
+        alert("Por favor selecciona una foto o archivo PDF antes de enviar.");
+        return;
+      }
+
+      var t = tareas.find(function(item) { return item.id === taskId; });
+      if (t && alumnoActualPin && estudiantesLocal[alumnoActualPin]) {
+        estudiantesLocal[alumnoActualPin].tareasEnviadas[taskId] = true;
+        estudiantesLocal[alumnoActualPin].estrellas += t.estrellas;
+
+        // Actualizar en Supabase si está disponible
+        if (db) {
+          db.from('alumnos_hotmart')
+            .update({ estrellas: estudiantesLocal[alumnoActualPin].estrellas })
+            .eq('pin_transaccion', alumnoActualPin);
+        }
+
+        alert("¡Felicidades! Tarea enviada correctamente. Ganaste " + t.estrellas + " ⭐");
+        actualizarPerfilAlumno();
+      }
+    }
+
+    function autorizarPinManual() {
+      var pin = document.getElementById("new-pin").value.trim();
+      var nombre = document.getElementById("new-name").value.trim();
+      if (!pin || !nombre) {
+        alert("Por favor completa el PIN y el Nombre.");
+        return;
+      }
+      estudiantesLocal[pin] = { nombre: nombre, estrellas: 0, tareasEnviadas: {} };
+
+      if (db) {
+        db.from('alumnos_hotmart').insert([{ pin_transaccion: pin, nombre: nombre, estrellas: 0 }]);
+      }
+
+      alert("¡PIN autorizado con éxito para " + nombre + "!");
+      document.getElementById("new-pin").value = "";
+      document.getElementById("new-name").value = "";
+      actualizarListaAdmin();
+    }
+
+    function sumarEstrella(pin) {
+      if (estudiantesLocal[pin]) {
+        estudiantesLocal[pin].estrellas++;
+        if (db) {
+          db.from('alumnos_hotmart').update({ estrellas: estudiantesLocal[pin].estrellas }).eq('pin_transaccion', pin);
+        }
+        actualizarListaAdmin();
+      }
+    }
+
+    function restarEstrella(pin) {
+      if (estudiantesLocal[pin] && estudiantesLocal[pin].estrellas > 0) {
+        estudiantesLocal[pin].estrellas--;
+        if (db) {
+          db.from('alumnos_hotmart').update({ estrellas: estudiantesLocal[pin].estrellas }).eq('pin_transaccion', pin);
+        }
+        actualizarListaAdmin();
+      }
+    }
+
+    function actualizarListaAdmin() {
+      var container = document.getElementById("students-list");
+      container.innerHTML = "";
+      var keys = Object.keys(estudiantesLocal);
+      if (keys.length === 0) {
+        container.innerHTML = "<p style='color: #6c757d;'>No hay estudiantes registrados temporalmente.</p>";
+        return;
+      }
+      keys.forEach(function(pin) {
+        var est = estudiantesLocal[pin];
+        var div = document.createElement("div");
+        div.className = "card-item flex-between";
+        div.innerHTML = "<div><strong>" + est.nombre + "</strong><br><small>PIN: " + pin + "</small></div>" +
+                        "<div><span class='badge'>" + est.estrellas + " ⭐</span> " +
+                        "<button onclick=\"sumarEstrella('" + pin + "')\">+</button> " +
+                        "<button onclick=\"restarEstrella('" + pin + "')\" class='btn-secondary'>-</button></div>";
+        container.appendChild(div);
+      });
+    }
+
+    function crearTarea() {
+      var titulo = document.getElementById("task-title").value.trim();
+      var desc = document.getElementById("task-desc").value.trim();
+      var estrellas = parseInt(document.getElementById("task-stars").value) || 1;
+
+      if (!titulo) {
+        alert("Por favor escribe el título de la tarea.");
+        return;
+      }
+
+      var nuevaTarea = { id: Date.now(), titulo: titulo, desc: desc, estrellas: estrellas };
+      tareas.push(nuevaTarea);
+      alert("¡Tarea asignada correctamente!");
+      document.getElementById("task-title").value = "";
+      document.getElementById("task-desc").value = "";
+      document.getElementById("task-stars").value = "1";
+      actualizarTareasAdmin();
+    }
+
+    function borrarTarea(id) {
+      tareas = tareas.filter(function(t) { return t.id !== id; });
+      actualizarTareasAdmin();
+    }
+
+    function actualizarTareasAdmin() {
+      var container = document.getElementById("admin-tasks-list");
+      container.innerHTML = "";
+      if (tareas.length === 0) {
+        container.innerHTML = "<p style='color: #6c757d;'>No has creado tareas aún.</p>";
+        return;
+      }
+      tareas.forEach(function(t) {
+        var div = document.createElement("div");
+        div.className = "card-item flex-between";
+        div.innerHTML = "<div><strong>" + t.titulo + "</strong> (" + t.estrellas + " ⭐)<br><small>" + t.desc + "</small></div>" +
+                        "<button onclick=\"borrarTarea(" + t.id + ")\" class='btn-danger'>Borrar</button>";
+        container.appendChild(div);
+      });
     }
   </script>
 </body>
-</html>
+      </html>
