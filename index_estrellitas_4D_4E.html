@@ -1,0 +1,2588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estrellitas del Curso - Plataforma Oficial</title>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #fff8ed;
+      --card: #ffffff;
+      --accent: #ffb703;
+      --primary: #fb8500;
+      --text: #2b2d42;
+      --line: #ffe3a8;
+      --green: #2a9d8f;
+      --danger: #e63946;
+      --blue: #4361ee;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg, #fffaf3, #fff4e3 55%, #fff9ef);
+      color: var(--text);
+      margin: 0;
+      padding: 15px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid var(--line);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #ffda65, #ffae45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 1.4rem;
+    }
+
+    h2,
+    h3,
+    h4 {
+      color: var(--primary);
+      margin-top: 0;
+    }
+
+    .subtitle {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin: 2px 0 0 0;
+    }
+
+    .box {
+      margin-top: 20px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fffdf9;
+    }
+
+    input[type="password"],
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="file"],
+    select,
+    textarea {
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      box-sizing: border-box;
+      font-family: inherit;
+      background: white;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 16px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      margin: 3px;
+    }
+
+    button:hover {
+      background-color: #d97000;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: #c52a36;
+    }
+
+    .btn-green {
+      background-color: var(--green);
+    }
+
+    .btn-green:hover {
+      background-color: #21867a;
+    }
+
+    .btn-blue {
+      background-color: var(--blue);
+    }
+
+    .btn-blue:hover {
+      background-color: #304dcc;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .card-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      background: #fff3cd;
+      color: #856404;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .status-done {
+      background: #d4edda;
+      color: #155724;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .status-admin {
+      background: #e8eaff;
+      color: #27348b;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .week-block {
+      border: 2px dashed var(--line);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 18px;
+      background: #ffffff;
+    }
+
+    .week-locked {
+      background: #f8f9fa;
+      border-color: #dee2e6;
+      opacity: 0.7;
+    }
+
+    .notice {
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff3cd;
+      color: #856404;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .success-box {
+      padding: 12px;
+      border-radius: 10px;
+      background: #d4edda;
+      color: #155724;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .danger-box {
+      padding: 12px;
+      border-radius: 10px;
+      background: #f8d7da;
+      color: #721c24;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #6c757d;
+    }
+
+    .small-text {
+      font-size: 12px;
+      color: #6c757d;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, #fff3cd, #fff8ed);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      border: 1px solid var(--line);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        align-items: flex-start;
+      }
+
+      header button {
+        font-size: 11px !important;
+        padding: 7px 8px !important;
+      }
+
+      .flex-between {
+        align-items: flex-start;
+      }
+
+      .card-item .flex-between {
+        flex-direction: column;
+      }
+    }
+  
+    .admin-stats {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin:12px 0 8px;
+    }
+    .stat-card {
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#fffaf0;
+      text-align:center;
+    }
+    .stat-card strong { display:block; font-size:25px; color:#e88900; }
+    .stat-card span { display:block; margin-top:3px; font-size:13px; color:#59636e; }
+    .delivery-item {
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:13px;
+      margin-top:10px;
+      background:#fff;
+    }
+    .mini-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+
+    .progress-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin:10px 0;
+    }
+    .progress-card {
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#fffaf0;
+      text-align:center;
+    }
+    .progress-card strong { display:block; font-size:22px; color:#e88900; }
+    .progress-card span { display:block; margin-top:3px; font-size:12px; color:#59636e; }
+    .progress-bar-wrap {
+      height:12px;
+      background:#f1f3f5;
+      border-radius:20px;
+      overflow:hidden;
+      margin-top:10px;
+      border:1px solid #e9ecef;
+    }
+    .progress-bar-fill {
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#ffb703,#fb8500);
+      border-radius:20px;
+      transition:width .35s ease;
+    }
+    .progress-week-item {
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      margin-top:8px;
+      background:#fff;
+    }
+    .podium-grid {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+      align-items:end;
+      margin:10px 0 14px;
+    }
+    .podium-card {
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 7px;
+      text-align:center;
+      background:#fffaf0;
+    }
+    .podium-card.first { min-height:118px; }
+    .podium-card.second, .podium-card.third { min-height:98px; }
+    .podium-medal { font-size:30px; }
+    .podium-name { font-weight:bold; font-size:13px; word-break:break-word; }
+    .podium-stars { margin-top:4px; font-weight:bold; font-size:12px; }
+    .ranking-meta { font-size:12px; color:#59636e; margin-top:5px; }
+    .ranking-current {
+      border:2px solid #f0c419 !important;
+      background:#fffbea !important;
+    }
+    .week-button-active {
+      background:#4361ee !important;
+      color:#fff !important;
+    }
+    @media (min-width:600px) {
+      .admin-stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .progress-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- ================= HEADER ================= -->
+
+  <header>
+    <div class="brand">
+      <div class="logo">⭐</div>
+
+      <div>
+        <h1>Estrellitas del Curso</h1>
+        <p class="subtitle">Plataforma Oficial de Alumnos</p>
+      </div>
+    </div>
+
+    <button
+      onclick="mostrarLoginAdmin()"
+      class="btn-secondary"
+      style="font-size:12px; padding:7px 10px;"
+    >
+      🔑 Administrador
+    </button>
+  </header>
+
+
+  <!-- ================= SECCIÓN ALUMNOS ================= -->
+
+  <div id="student-section">
+
+    <!-- LOGIN ALUMNO -->
+
+    <div id="login-student-box" class="box">
+
+      <h2>¡Bienvenido/a al Curso! 🌟</h2>
+
+      <p>
+        Ingresa tu código de inscripción para acceder a tus actividades.
+      </p>
+
+      <input
+        type="text"
+        id="student-pin"
+        placeholder="Ej: HP12345678"
+        autocomplete="off"
+      />
+
+      <br>
+
+      <button onclick="ingresarAlumno()">
+        ✨ Ingresar
+      </button>
+
+    </div>
+
+
+    <!-- PERFIL ALUMNO -->
+
+    <div id="profile-box" class="box hidden">
+
+      <div class="flex-between">
+
+        <div>
+          <h2
+            style="margin:0;"
+            id="profile-name"
+          >
+            Estudiante
+          </h2>
+
+          <small style="color:#6c757d;">
+            PIN:
+            <span id="profile-pin">-</span>
+          </small>
+        </div>
+
+        <span
+          id="profile-stars"
+          class="badge"
+          style="font-size:16px;"
+        >
+          0 ⭐
+        </span>
+
+      </div>
+
+      <br>
+
+      <button
+        onclick="salirAlumno()"
+        class="btn-secondary"
+        style="font-size:12px;"
+      >
+        Salir / Cambiar cuenta
+      </button>
+
+      <hr
+        style="
+          border:0;
+          border-top:1px solid var(--line);
+          margin:20px 0;
+        "
+      >
+
+      <!-- ================= PROGRESO INDIVIDUAL ================= -->
+
+      <h3>📊 Mi Progreso</h3>
+
+      <div id="student-progress-container">
+        <div class="loading">Cargando progreso...</div>
+      </div>
+
+      <hr
+        style="
+          border:0;
+          border-top:1px solid var(--line);
+          margin:20px 0;
+        "
+      >
+
+      <!-- ================= RANKING AVANZADO ================= -->
+
+      <h3>🏆 Ranking Estelar</h3>
+
+      <div id="student-position-container" style="margin-bottom:12px;">
+        <div class="loading">Calculando tu posición...</div>
+      </div>
+
+      <div id="student-ranking-container">
+        <div class="loading">Cargando ranking...</div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <strong>📅 Ranking por semana</strong>
+        <div class="mini-actions" style="margin-top:8px;">
+          <button type="button" class="btn-blue ranking-week-btn" data-week="1">Semana 1</button>
+          <button type="button" class="btn-secondary ranking-week-btn" data-week="2">Semana 2</button>
+          <button type="button" class="btn-secondary ranking-week-btn" data-week="3">Semana 3</button>
+          <button type="button" class="btn-secondary ranking-week-btn" data-week="4">Semana 4</button>
+        </div>
+        <div id="student-week-ranking-container" style="margin-top:10px;">
+          <div class="loading">Selecciona una semana...</div>
+        </div>
+      </div>
+
+      <hr
+        style="
+          border:0;
+          border-top:1px solid var(--line);
+          margin:20px 0;
+        "
+      >
+
+      <h3>🗺️ Semanas de Aventura</h3>
+
+      <div id="student-weeks-container">
+        <div class="loading">
+          Cargando aventuras...
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= LOGIN ADMIN ================= -->
+
+  <div id="admin-login" class="box hidden">
+
+    <h3>👑 Acceso de Administrador</h3>
+
+    <p>
+      Ingresa el correo y contraseña de tu cuenta de administrador.
+    </p>
+
+    <input
+      type="email"
+      id="admin-email"
+      placeholder="Correo del administrador"
+      autocomplete="username"
+    />
+
+    <input
+      type="password"
+      id="admin-pass"
+      placeholder="Contraseña"
+      autocomplete="current-password"
+    />
+
+    <br>
+
+    <button onclick="verificarAdmin()">
+      🔐 Entrar
+    </button>
+
+    <button
+      onclick="ocultarLoginAdmin()"
+      class="btn-secondary"
+    >
+      Volver
+    </button>
+
+  </div>
+
+
+  <!-- ================= PANEL ADMIN ================= -->
+
+  <div id="admin-panel" class="box hidden">
+
+    <div class="admin-header">
+
+      <div class="flex-between">
+
+        <div>
+          <h2 style="margin:0;">
+            👑 Panel de Administración
+          </h2>
+
+          <span
+            id="admin-email-display"
+            class="status-admin"
+          >
+            Administrador
+          </span>
+        </div>
+
+        <button
+          onclick="cerrarAdmin()"
+          class="btn-secondary"
+          style="font-size:12px;"
+        >
+          Cerrar Sesión
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= RESUMEN ================= -->
+
+    <h3>📊 Resumen del Curso</h3>
+
+    <div class="admin-stats" id="admin-stats">
+      <div class="stat-card"><strong id="stat-students">—</strong><span>👥 Alumnos</span></div>
+      <div class="stat-card"><strong id="stat-tasks">—</strong><span>📚 Tareas</span></div>
+      <div class="stat-card"><strong id="stat-deliveries">—</strong><span>📤 Entregas</span></div>
+      <div class="stat-card"><strong id="stat-stars">—</strong><span>⭐ Estrellas</span></div>
+    </div>
+
+    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0;">
+
+    <!-- ================= CREAR TAREA ================= -->
+
+    <h3>📝 Crear Nueva Tarea de Aventura</h3>
+
+    <label
+      style="
+        font-size:13px;
+        font-weight:bold;
+      "
+    >
+      Semana de la Aventura:
+    </label>
+
+    <select id="task-week">
+
+      <option value="1">
+        Semana de Aventura 1
+      </option>
+
+      <option value="2">
+        Semana de Aventura 2
+      </option>
+
+      <option value="3">
+        Semana de Aventura 3
+      </option>
+
+      <option value="4">
+        Semana de Aventura 4
+      </option>
+
+    </select>
+
+    <input
+      type="text"
+      id="task-title"
+      placeholder="Título de la Tarea"
+    />
+
+    <textarea
+      id="task-desc"
+      placeholder="Instrucciones para el alumno..."
+    ></textarea>
+
+    <input
+      type="number"
+      id="task-stars"
+      placeholder="Valor en Estrellas"
+      min="1"
+      value="1"
+    />
+
+    <button onclick="crearTarea()">
+      ➕ Asignar Tarea
+    </button>
+
+
+    <hr
+      style="
+        border:0;
+        border-top:1px solid var(--line);
+        margin:20px 0;
+      "
+    >
+
+
+    <!-- ================= REGISTRO ALUMNO ================= -->
+
+    <h3>🔑 Registrar Alumno</h3>
+
+    <input
+      type="text"
+      id="new-name"
+      placeholder="Nombre del Alumno"
+    />
+
+    <p style="margin:8px 0;color:var(--muted);font-size:.9rem;">
+      El sistema generará automáticamente un PIN único para el alumno.
+    </p>
+
+    <button
+      onclick="autorizarPinManual()"
+      class="btn-blue"
+    >
+      ➕ Crear Alumno y Generar PIN
+    </button>
+
+
+    <hr
+      style="
+        border:0;
+        border-top:1px solid var(--line);
+        margin:20px 0;
+      "
+    >
+
+
+    <!-- ================= LISTA ALUMNOS ================= -->
+
+    <h3>👥 Inscripciones Activas y Estrellas</h3>
+
+    <div id="students-list">
+      <div class="loading">
+        Cargando estudiantes...
+      </div>
+    </div>
+
+
+    <hr
+      style="
+        border:0;
+        border-top:1px solid var(--line);
+        margin:20px 0;
+      "
+    >
+
+
+    <!-- ================= TAREAS ================= -->
+
+    <h3>📋 Tareas Publicadas</h3>
+
+    <div id="admin-tasks-list">
+      <div class="loading">
+        Cargando tareas...
+      </div>
+    </div>
+
+
+    <hr
+      style="
+        border:0;
+        border-top:1px solid var(--line);
+        margin:20px 0;
+      "
+    >
+
+
+    <!-- ================= ENTREGAS ================= -->
+
+    <h3>📤 Entregas de los Alumnos</h3>
+    <p class="small-text">Aquí puedes comprobar quién completó cada tarea. Los archivos de los alumnos no se guardan en la plataforma.</p>
+    <button onclick="actualizarEntregasAdmin()" class="btn-blue">🔄 Actualizar Entregas</button>
+    <div id="admin-deliveries-list">
+      <div class="loading">Cargando entregas...</div>
+    </div>
+
+    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0;">
+
+    <!-- ================= CAMBIAR CONTRASEÑA ================= -->
+
+    <h3>🔐 Cambiar Contraseña del Administrador</h3>
+
+    <p class="small-text">
+      Esta contraseña será administrada por Supabase Auth y permanecerá
+      cambiada aunque cierres o recargues la página.
+    </p>
+
+    <input
+      type="password"
+      id="new-admin-pass"
+      placeholder="Nueva contraseña"
+      autocomplete="new-password"
+    />
+
+    <button onclick="cambiarClaveAdmin()">
+      🔄 Actualizar Contraseña
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN SUPABASE
+   ========================================================= */
+
+/*
+  IMPORTANTE:
+
+  Reemplaza solamente estos dos valores.
+
+  SUPABASE_URL:
+  Tu Project URL.
+
+  SUPABASE_ANON_KEY:
+  Tu Publishable Key.
+
+  NO pongas aquí:
+  - Secret key
+  - service_role
+*/
+
+const SUPABASE_URL =
+  "https://nguuaprofocbcxhfmmne.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_eFewOYWTL5P5o-cvNiHcyw_oCtQDSDF";
+
+
+/* =========================================================
+   CONEXIÓN
+   ========================================================= */
+
+let db = null;
+
+let alumnoActual = null;
+
+let tareasAlumno = [];
+
+let administradorActivo = false;
+
+
+/*
+  Comprobamos que las credenciales hayan sido reemplazadas.
+*/
+
+if (
+  SUPABASE_URL &&
+  !SUPABASE_URL.includes("PON_AQUI") &&
+  SUPABASE_ANON_KEY &&
+  !SUPABASE_ANON_KEY.includes("PON_AQUI")
+) {
+
+  db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+}
+
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+
+function escapeHtml(text) {
+
+  if (text === null || text === undefined) {
+    return "";
+  }
+
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function mostrarErrorConexion() {
+
+  alert(
+    "La plataforma todavía no está conectada a Supabase.\n\n" +
+    "Revisa SUPABASE_URL y SUPABASE_ANON_KEY en el código."
+  );
+
+}
+
+
+function mostrarLoginAdmin() {
+
+  document
+    .getElementById("student-section")
+    .classList.add("hidden");
+
+  document
+    .getElementById("admin-login")
+    .classList.remove("hidden");
+
+}
+
+
+function ocultarLoginAdmin() {
+
+  document
+    .getElementById("admin-login")
+    .classList.add("hidden");
+
+  if (!administradorActivo) {
+
+    document
+      .getElementById("student-section")
+      .classList.remove("hidden");
+
+  }
+
+}
+
+
+/* =========================================================
+   ADMINISTRADOR
+   ========================================================= */
+
+async function verificarAdmin() {
+
+  if (!db) {
+    mostrarErrorConexion();
+    return;
+  }
+
+  const email =
+    document
+      .getElementById("admin-email")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("admin-pass")
+      .value;
+
+  if (!email || !password) {
+
+    alert(
+      "Escribe tu correo y contraseña."
+    );
+
+    return;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } = await db.auth.signInWithPassword({
+
+      email: email,
+
+      password: password
+
+    });
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "No se pudo iniciar sesión.\n\n" +
+        "Verifica el correo y la contraseña."
+      );
+
+      return;
+    }
+
+
+    /*
+      Ahora comprobamos que el usuario
+      realmente esté registrado en admins.
+    */
+
+    const {
+      data: esAdmin,
+      error: adminError
+    } = await db.rpc("es_admin");
+
+
+    if (adminError) {
+
+      console.error(adminError);
+
+      await db.auth.signOut();
+
+      alert(
+        "No se pudo comprobar los permisos de administrador."
+      );
+
+      return;
+    }
+
+
+    if (!esAdmin) {
+
+      await db.auth.signOut();
+
+      alert(
+        "Esta cuenta existe, pero no tiene permisos de administrador."
+      );
+
+      return;
+    }
+
+
+    administradorActivo = true;
+
+
+    document
+      .getElementById("admin-login")
+      .classList.add("hidden");
+
+    document
+      .getElementById("student-section")
+      .classList.add("hidden");
+
+    document
+      .getElementById("admin-panel")
+      .classList.remove("hidden");
+
+
+    document
+      .getElementById("admin-email-display")
+      .innerText =
+        data.user.email || "Administrador";
+
+
+    document
+      .getElementById("admin-pass")
+      .value = "";
+
+
+    await actualizarListaAdmin();
+    await actualizarTareasAdmin();
+    await actualizarResumenAdmin();
+    await actualizarEntregasAdmin();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Ocurrió un error al iniciar sesión."
+    );
+
+  }
+
+}
+
+
+async function comprobarSesionAdmin() {
+
+  if (!db) {
+    return;
+  }
+
+  try {
+
+    const {
+      data
+    } = await db.auth.getSession();
+
+    const session = data.session;
+
+    if (!session) {
+      return;
+    }
+
+
+    const {
+      data: esAdmin,
+      error
+    } = await db.rpc("es_admin");
+
+
+    if (error || !esAdmin) {
+
+      await db.auth.signOut();
+
+      return;
+    }
+
+
+    administradorActivo = true;
+
+
+    document
+      .getElementById("student-section")
+      .classList.add("hidden");
+
+    document
+      .getElementById("admin-login")
+      .classList.add("hidden");
+
+    document
+      .getElementById("admin-panel")
+      .classList.remove("hidden");
+
+
+    document
+      .getElementById("admin-email-display")
+      .innerText =
+        session.user.email || "Administrador";
+
+
+    await actualizarListaAdmin();
+    await actualizarTareasAdmin();
+    await actualizarResumenAdmin();
+    await actualizarEntregasAdmin();
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Error comprobando sesión:",
+      error
+    );
+
+  }
+
+}
+
+
+async function cerrarAdmin() {
+
+  if (db) {
+
+    await db.auth.signOut();
+
+  }
+
+  administradorActivo = false;
+
+
+  document
+    .getElementById("admin-panel")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("admin-login")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("student-section")
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById("admin-email")
+    .value = "";
+
+  document
+    .getElementById("admin-pass")
+    .value = "";
+
+}
+
+
+async function cambiarClaveAdmin() {
+
+  if (!db) {
+
+    mostrarErrorConexion();
+
+    return;
+  }
+
+
+  const nueva =
+    document
+      .getElementById("new-admin-pass")
+      .value
+      .trim();
+
+
+  if (nueva.length < 6) {
+
+    alert(
+      "La nueva contraseña debe tener al menos 6 caracteres."
+    );
+
+    return;
+  }
+
+
+  try {
+
+    const {
+      error
+    } = await db.auth.updateUser({
+
+      password: nueva
+
+    });
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "No se pudo cambiar la contraseña.\n\n" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    alert(
+      "¡Contraseña actualizada correctamente! 🔐"
+    );
+
+
+    document
+      .getElementById("new-admin-pass")
+      .value = "";
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Ocurrió un error al cambiar la contraseña."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ALUMNOS
+   ========================================================= */
+
+async function ingresarAlumno() {
+
+  if (!db) {
+
+    mostrarErrorConexion();
+
+    return;
+  }
+
+
+  const pin =
+    document
+      .getElementById("student-pin")
+      .value
+      .trim();
+
+
+  if (!pin) {
+
+    alert(
+      "Por favor escribe tu código de inscripción."
+    );
+
+    return;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } = await db.rpc(
+      "ingresar_alumno",
+      {
+        p_pin: pin
+      }
+    );
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "No se pudo consultar el PIN."
+      );
+
+      return;
+    }
+
+
+    if (!data) {
+
+      alert(
+        "El PIN no ha sido encontrado o está inactivo."
+      );
+
+      return;
+    }
+
+
+    alumnoActual = {
+
+      id: data.id,
+
+      pin: data.pin_transaccion,
+
+      nombre: data.nombre,
+
+      estrellas: Number(data.estrellas || 0)
+
+    };
+
+
+    cargarVistaAlumno();
+
+    await cargarProgresoAlumno();
+    await cargarRankingAvanzado();
+    await cargarRankingSemana(1);
+    await cargarProgresoAlumno();
+    await cargarRankingAvanzado();
+    await cargarRankingSemana(1);
+    await cargarAventurasAlumno();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Ocurrió un error al ingresar."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   FASE 4D — PROGRESO INDIVIDUAL
+   ========================================================= */
+
+async function cargarProgresoAlumno() {
+  const container = document.getElementById("student-progress-container");
+  if (!container || !db || !alumnoActual) return;
+
+  container.innerHTML = '<div class="loading">Cargando progreso...</div>';
+
+  try {
+    const [resumen, semanal, ultimas] = await Promise.all([
+      db.rpc("obtener_progreso_alumno", { p_pin: alumnoActual.pin }),
+      db.rpc("obtener_progreso_semanal", { p_pin: alumnoActual.pin }),
+      db.rpc("obtener_ultimas_entregas_alumno", { p_pin: alumnoActual.pin })
+    ]);
+
+    if (resumen.error) throw resumen.error;
+    if (semanal.error) throw semanal.error;
+    if (ultimas.error) throw ultimas.error;
+
+    const p = resumen.data || {};
+    const semanas = Array.isArray(semanal.data) ? semanal.data : [];
+    const entregas = Array.isArray(ultimas.data) ? ultimas.data : [];
+
+    alumnoActual.estrellas = Number(p.estrellas || alumnoActual.estrellas || 0);
+    actualizarPerfilAlumno();
+
+    const porcentaje = Math.max(0, Math.min(100, Number(p.porcentaje || 0)));
+
+    let html =
+      '<div class="progress-grid">' +
+        '<div class="progress-card"><strong>' + Number(p.estrellas || 0) + ' ⭐</strong><span>Estrellas</span></div>' +
+        '<div class="progress-card"><strong>' + Number(p.tareas_completadas || 0) + '</strong><span>Completadas</span></div>' +
+        '<div class="progress-card"><strong>' + Number(p.tareas_pendientes || 0) + '</strong><span>Pendientes</span></div>' +
+        '<div class="progress-card"><strong>' + porcentaje + '%</strong><span>Progreso</span></div>' +
+      '</div>' +
+      '<div class="progress-bar-wrap" aria-label="Progreso del alumno">' +
+        '<div class="progress-bar-fill" style="width:' + porcentaje + '%;"></div>' +
+      '</div>';
+
+    if (semanas.length) {
+      html += '<div style="margin-top:14px;"><strong>📚 Progreso por semana</strong></div>';
+      html += semanas.map(function(s) {
+        const pct = Math.max(0, Math.min(100, Number(s.porcentaje || 0)));
+        return '<div class="progress-week-item">' +
+          '<div class="flex-between">' +
+            '<strong>Semana ' + Number(s.semana) + '</strong>' +
+            '<span class="badge">' + pct + '%</span>' +
+          '</div>' +
+          '<div class="progress-bar-wrap" style="margin-top:7px;">' +
+            '<div class="progress-bar-fill" style="width:' + pct + '%;"></div>' +
+          '</div>' +
+          '<div class="ranking-meta">' + Number(s.completadas || 0) + ' completadas · ' + Number(s.pendientes || 0) + ' pendientes</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    if (entregas.length) {
+      html += '<div style="margin-top:14px;"><strong>🕒 Últimas entregas</strong></div>';
+      html += entregas.slice(0, 5).map(function(e) {
+        return '<div class="card-item" style="padding:10px;">' +
+          '<div class="flex-between">' +
+            '<strong>' + escapeHtml(e.titulo || 'Tarea') + '</strong>' +
+            '<span class="status-done">✔ +' + Number(e.estrellas || 0) + ' ⭐</span>' +
+          '</div>' +
+          '<div class="ranking-meta">Semana ' + Number(e.semana || 0) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    container.innerHTML = html;
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML =
+      '<div class="danger-box">No se pudo cargar tu progreso.<br><small>' +
+      escapeHtml(error.message || '') + '</small></div>';
+  }
+}
+
+
+/* =========================================================
+   FASE 4E — RANKING AVANZADO
+   ========================================================= */
+
+function obtenerMedalla(posicion) {
+  if (posicion === 1) return '🥇';
+  if (posicion === 2) return '🥈';
+  if (posicion === 3) return '🥉';
+  return posicion + '️⃣';
+}
+
+function renderizarPodio(ranking) {
+  if (!ranking.length) return '';
+
+  const ordenPodio = [ranking[1], ranking[0], ranking[2]];
+  const clases = ['second', 'first', 'third'];
+
+  return '<div class="podium-grid">' +
+    ordenPodio.map(function(alumno, index) {
+      if (!alumno) return '<div></div>';
+      const posicion = Number(alumno.posicion || 0);
+      return '<div class="podium-card ' + clases[index] + '">' +
+        '<div class="podium-medal">' + obtenerMedalla(posicion) + '</div>' +
+        '<div class="podium-name">' + escapeHtml(alumno.nombre || 'Alumno') + '</div>' +
+        '<div class="podium-stars">' + Number(alumno.estrellas || 0) + ' ⭐</div>' +
+        '<div class="ranking-meta">' + Number(alumno.tareas_completadas || 0) + ' tareas · ' + Number(alumno.porcentaje || 0) + '%</div>' +
+      '</div>';
+    }).join('') +
+  '</div>';
+}
+
+
+async function cargarRankingAvanzado() {
+  const container = document.getElementById("student-ranking-container");
+  const positionContainer = document.getElementById("student-position-container");
+  if (!container || !db) return;
+
+  container.innerHTML = '<div class="loading">Cargando ranking...</div>';
+  if (positionContainer) {
+    positionContainer.innerHTML = '<div class="loading">Calculando tu posición...</div>';
+  }
+
+  try {
+    const rankingResult = await db.rpc("obtener_ranking_avanzado");
+    if (rankingResult.error) throw rankingResult.error;
+
+    const ranking = Array.isArray(rankingResult.data) ? rankingResult.data : [];
+
+    if (!ranking.length) {
+      container.innerHTML = '<p style="color:#6c757d;">Todavía no hay alumnos activos en el ranking.</p>';
+    } else {
+      let html = renderizarPodio(ranking);
+      html += ranking.map(function(alumno) {
+        const posicion = Number(alumno.posicion || 0);
+        const actual = alumnoActual && alumnoActual.id === alumno.id;
+        return '<div class="card-item ' + (actual ? 'ranking-current' : '') + '">' +
+          '<div class="flex-between">' +
+            '<strong>' + obtenerMedalla(posicion) + ' ' + escapeHtml(alumno.nombre || 'Alumno') + (actual ? ' · Tú' : '') + '</strong>' +
+            '<span class="badge">' + Number(alumno.estrellas || 0) + ' ⭐</span>' +
+          '</div>' +
+          '<div class="ranking-meta">📚 ' + Number(alumno.tareas_completadas || 0) + ' completadas · 📈 ' + Number(alumno.porcentaje || 0) + '% de progreso</div>' +
+        '</div>';
+      }).join('');
+      container.innerHTML = html;
+    }
+
+    if (positionContainer && alumnoActual) {
+      const posResult = await db.rpc("obtener_posicion_alumno", { p_pin: alumnoActual.pin });
+      if (posResult.error) throw posResult.error;
+      const pos = posResult.data || {};
+      positionContainer.innerHTML =
+        '<div class="success-box" style="margin:0; text-align:center;">' +
+          '<strong style="font-size:18px;">🏆 Tu posición: #' + Number(pos.posicion || 0) + '</strong><br>' +
+          '<small>' + Number(pos.estrellas || 0) + ' ⭐ en total</small>' +
+        '</div>';
+    }
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML =
+      '<div class="danger-box">No se pudo cargar el ranking avanzado.<br><small>' +
+      escapeHtml(error.message || '') + '</small></div>';
+    if (positionContainer) positionContainer.innerHTML = '';
+  }
+}
+
+
+async function cargarRankingSemana(semana) {
+  const container = document.getElementById("student-week-ranking-container");
+  if (!container || !db) return;
+
+  semana = Number(semana) || 1;
+  container.innerHTML = '<div class="loading">Cargando Semana ' + semana + '...</div>';
+
+  try {
+    const { data, error } = await db.rpc("obtener_ranking_semanal", {
+      p_semana: semana
+    });
+
+    if (error) throw error;
+
+    const ranking = Array.isArray(data) ? data : [];
+
+    if (!ranking.length) {
+      container.innerHTML = '<p style="color:#6c757d;">No hay alumnos o tareas activas en esta semana.</p>';
+      return;
+    }
+
+    container.innerHTML = ranking.map(function(alumno) {
+      const actual = alumnoActual && alumnoActual.id === alumno.id;
+      return '<div class="card-item ' + (actual ? 'ranking-current' : '') + '">' +
+        '<div class="flex-between">' +
+          '<strong>' + obtenerMedalla(Number(alumno.posicion || 0)) + ' ' + escapeHtml(alumno.nombre || 'Alumno') + (actual ? ' · Tú' : '') + '</strong>' +
+          '<span class="badge">' + Number(alumno.tareas_completadas || 0) + ' 📚</span>' +
+        '</div>' +
+        '<div class="ranking-meta">' + Number(alumno.porcentaje || 0) + '% de la semana · ' + Number(alumno.estrellas || 0) + ' ⭐ totales</div>' +
+      '</div>';
+    }).join('');
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML =
+      '<div class="danger-box">No se pudo cargar el ranking de la semana.<br><small>' +
+      escapeHtml(error.message || '') + '</small></div>';
+  }
+}
+
+
+function configurarBotonesRankingSemana() {
+  const botones = document.querySelectorAll('.ranking-week-btn');
+  botones.forEach(function(btn) {
+    btn.addEventListener('click', async function() {
+      botones.forEach(function(b) {
+        b.classList.remove('week-button-active');
+        b.classList.add('btn-secondary');
+      });
+      btn.classList.remove('btn-secondary');
+      btn.classList.add('week-button-active');
+      await cargarRankingSemana(Number(btn.dataset.week));
+    });
+  });
+
+  if (botones.length) {
+    botones[0].classList.remove('btn-secondary');
+    botones[0].classList.add('week-button-active');
+  }
+}
+
+
+/*
+  Compatibilidad con las funciones existentes del panel admin.
+  Algunas acciones administrativas llaman a cargarRanking().
+*/
+async function cargarRanking() {
+  await cargarRankingAvanzado();
+}
+
+
+function cargarVistaAlumno() {
+
+  document
+    .getElementById("login-student-box")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("profile-box")
+    .classList.remove("hidden");
+
+
+  actualizarPerfilAlumno();
+
+}
+
+
+function salirAlumno() {
+
+  alumnoActual = null;
+
+  tareasAlumno = [];
+
+
+  document
+    .getElementById("profile-box")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("login-student-box")
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById("student-pin")
+    .value = "";
+
+
+  document
+    .getElementById("student-weeks-container")
+    .innerHTML = "";
+
+  const progressContainer = document.getElementById("student-progress-container");
+  if (progressContainer) progressContainer.innerHTML = "";
+
+  const rankingContainer = document.getElementById("student-ranking-container");
+  if (rankingContainer) rankingContainer.innerHTML = "";
+
+  const positionContainer = document.getElementById("student-position-container");
+  if (positionContainer) positionContainer.innerHTML = "";
+
+  const weekRankingContainer = document.getElementById("student-week-ranking-container");
+  if (weekRankingContainer) weekRankingContainer.innerHTML = "";
+
+}
+
+
+function actualizarPerfilAlumno() {
+
+  if (!alumnoActual) {
+    return;
+  }
+
+
+  document
+    .getElementById("profile-name")
+    .innerText =
+      alumnoActual.nombre;
+
+
+  document
+    .getElementById("profile-pin")
+    .innerText =
+      alumnoActual.pin;
+
+
+  document
+    .getElementById("profile-stars")
+    .innerText =
+      alumnoActual.estrellas + " ⭐";
+
+}
+
+
+/* =========================================================
+   AVENTURAS DEL ALUMNO
+   ========================================================= */
+
+async function cargarAventurasAlumno() {
+
+  if (!db || !alumnoActual) {
+    return;
+  }
+
+
+  const container =
+    document.getElementById(
+      "student-weeks-container"
+    );
+
+
+  container.innerHTML =
+    '<div class="loading">Cargando aventuras... 🌟</div>';
+
+
+  try {
+
+    const {
+      data,
+      error
+    } = await db.rpc(
+      "obtener_aventuras",
+      {
+        p_pin: alumnoActual.pin
+      }
+    );
+
+
+    if (error) {
+
+      console.error(error);
+
+      container.innerHTML =
+        '<div class="danger-box">' +
+        'No se pudieron cargar las aventuras.' +
+        '</div>';
+
+      return;
+    }
+
+
+    tareasAlumno =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    renderizarAventurasAlumno();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    container.innerHTML =
+      '<div class="danger-box">' +
+      'Ocurrió un error al cargar las aventuras.' +
+      '</div>';
+
+  }
+
+}
+
+
+function renderizarAventurasAlumno() {
+
+  const container = document.getElementById("student-weeks-container");
+  container.innerHTML = "";
+
+  if (!tareasAlumno.length) {
+    container.innerHTML = '<p style="color:#6c757d;">No hay aventuras asignadas por el momento.</p>';
+    return;
+  }
+
+  // Orden global: primero la semana y luego el ID de creación.
+  // Solo la primera tarea pendiente queda desbloqueada.
+  const ordenadas = [...tareasAlumno].sort(function(a, b) {
+    const sa = Number(a.semana) || 0;
+    const sb = Number(b.semana) || 0;
+    if (sa !== sb) return sa - sb;
+    return Number(a.id) - Number(b.id);
+  });
+
+  let anteriorCompletada = true;
+  const estadoPorId = {};
+
+  ordenadas.forEach(function(t) {
+    const enviada = t.entregada === true || t.entregada === "true";
+    estadoPorId[t.id] = { enviada: enviada, disponible: anteriorCompletada };
+    anteriorCompletada = enviada;
+  });
+
+  [1, 2, 3, 4].forEach(function(numSemana) {
+    const tareasDeSemana = ordenadas.filter(function(t) {
+      return Number(t.semana) === numSemana;
+    });
+
+    if (!tareasDeSemana.length) return;
+
+    const weekBox = document.createElement("div");
+    weekBox.className = "week-block";
+
+    const title = document.createElement("h4");
+    title.style.margin = "0 0 10px 0";
+    title.textContent = "🌟 Semana de Aventura " + numSemana;
+    weekBox.appendChild(title);
+
+    tareasDeSemana.forEach(function(t) {
+      const div = document.createElement("div");
+      div.className = "card-item";
+
+      const estado = estadoPorId[t.id];
+
+      if (estado.enviada) {
+        div.innerHTML =
+          "<div class='flex-between'>" +
+            "<strong>" + escapeHtml(t.titulo) + "</strong>" +
+            "<span class='status-done'>✔ Completada (+" + Number(t.estrellas) + " ⭐)</span>" +
+          "</div>" +
+          "<p style='margin:5px 0;'><small>" + escapeHtml(t.descripcion || "") + "</small></p>" +
+          "<div class='success-box' style='margin-top:10px;'>🎉 ¡Aventura completada! La siguiente tarea puede desbloquearse.</div>";
+      } else if (estado.disponible) {
+        div.innerHTML =
+          "<div class='flex-between'>" +
+            "<strong>" + escapeHtml(t.titulo) + "</strong>" +
+            "<span class='badge'>" + Number(t.estrellas) + " ⭐</span>" +
+          "</div>" +
+          "<p style='margin:5px 0;'><small>" + escapeHtml(t.descripcion || "") + "</small></p>" +
+          "<div class='notice' style='margin-top:10px;'>🔓 <strong>¡Aventura desbloqueada!</strong><br>Selecciona tu foto o PDF. El archivo NO será subido ni almacenado.</div>" +
+          "<div style='margin-top:10px;'>" +
+            "<input type='file' accept='image/*,application/pdf' id='file-" + Number(t.id) + "' style='font-size:12px;' />" +
+            "<br>" +
+            "<button onclick='entregarTarea(" + Number(t.id) + ", this)' style='font-size:12px; margin-top:5px;'>📤 Confirmar Entrega</button>" +
+          "</div>";
+      } else {
+        div.innerHTML =
+          "<div class='flex-between'>" +
+            "<strong style='color:#6c757d;'>🔒 " + escapeHtml(t.titulo) + "</strong>" +
+            "<span class='badge' style='opacity:.65;'>" + Number(t.estrellas) + " ⭐</span>" +
+          "</div>" +
+          "<p style='margin:5px 0;'><small>" + escapeHtml(t.descripcion || "") + "</small></p>" +
+          "<div class='notice' style='margin-top:10px; background:#f1f3f5; color:#6c757d;'>🔒 <strong>Tarea bloqueada</strong><br>Completa la aventura anterior para desbloquear esta.</div>";
+      }
+
+      weekBox.appendChild(div);
+    });
+
+    container.appendChild(weekBox);
+  });
+}
+
+
+/* =========================================================
+   ENTREGAR TAREA
+   ========================================================= */
+
+async function entregarTarea(taskId, boton) {
+
+  if (!db || !alumnoActual) {
+
+    alert(
+      "La sesión del alumno no está activa."
+    );
+
+    return;
+  }
+
+
+  const fileInput =
+    document.getElementById(
+      "file-" + taskId
+    );
+
+
+  if (
+    !fileInput ||
+    fileInput.files.length === 0
+  ) {
+
+    alert(
+      "Por favor selecciona una foto o PDF antes de confirmar la entrega."
+    );
+
+    return;
+  }
+
+
+  /*
+    IMPORTANTE:
+
+    NO hacemos:
+      storage.upload()
+      fetch(file)
+      FormData()
+      insert del archivo
+
+    El archivo permanece en el dispositivo
+    y solamente registramos la entrega.
+  */
+
+
+  if (boton) {
+    boton.disabled = true;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } = await db.rpc(
+      "entregar_tarea",
+      {
+        p_pin: alumnoActual.pin,
+
+        p_tarea_id: Number(taskId)
+
+      }
+    );
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "No se pudo registrar la entrega.\n\n" +
+        error.message
+      );
+
+      if (boton) {
+        boton.disabled = false;
+      }
+
+      return;
+    }
+
+
+    if (!data || data.success !== true) {
+
+      alert(
+        data && data.message
+          ? data.message
+          : "No se pudo registrar la entrega."
+      );
+
+      if (boton) {
+        boton.disabled = false;
+      }
+
+      return;
+    }
+
+
+    /*
+      Actualizamos las estrellas
+      recibidas desde el servidor.
+    */
+
+    alumnoActual.estrellas =
+      Number(
+        data.total_estrellas ||
+        alumnoActual.estrellas
+      );
+
+
+    actualizarPerfilAlumno();
+
+
+    /*
+      Limpiamos la referencia al archivo.
+      Nunca fue enviado.
+    */
+
+    fileInput.value = "";
+
+
+    alert(
+      "🎉 ¡Entrega registrada correctamente!\n\n" +
+      "Ganaste " +
+      Number(data.estrellas_ganadas || 0) +
+      " ⭐"
+    );
+
+
+    await cargarAventurasAlumno();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Ocurrió un error al registrar la entrega."
+    );
+
+    if (boton) {
+      boton.disabled = false;
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   ADMIN — LISTA DE ALUMNOS
+   ========================================================= */
+
+async function actualizarListaAdmin() {
+
+  if (!db || !administradorActivo) return;
+
+  const container = document.getElementById("students-list");
+  container.innerHTML = '<div class="loading">Cargando estudiantes...</div>';
+
+  try {
+    const { data, error } = await db.rpc("admin_obtener_alumnos");
+
+    if (error) {
+      console.error(error);
+      container.innerHTML = '<div class="danger-box">No se pudieron cargar los estudiantes.</div>';
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p style="color:#6c757d;">No hay estudiantes registrados.</p>';
+      return;
+    }
+
+    container.innerHTML = "";
+
+    data.forEach(function(est) {
+      const div = document.createElement("div");
+      div.className = "card-item";
+
+      const estado = est.activo ? "🟢 Activo" : "🔴 Inactivo";
+      const botonEstado = est.activo ? "🔴 Desactivar" : "🟢 Activar";
+
+      div.innerHTML =
+        "<div class='flex-between' style='gap:12px;align-items:flex-start;'>" +
+          "<div style='flex:1;'>" +
+            "<strong>" + escapeHtml(est.nombre) + "</strong>" +
+            "<br><small>PIN: " + escapeHtml(est.pin_transaccion) + "</small>" +
+            "<br><small>" + estado + "</small>" +
+          "</div>" +
+          "<div style='text-align:right;'>" +
+            "<span class='badge'>" + Number(est.estrellas || 0) + " ⭐</span>" +
+          "</div>" +
+        "</div>" +
+        "<div style='display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;'>" +
+          "<button onclick=\"sumarEstrella('" + escapeHtml(est.id) + "')\">+ ⭐</button>" +
+          "<button onclick=\"restarEstrella('" + escapeHtml(est.id) + "')\" class='btn-secondary'>- ⭐</button>" +
+          "<button onclick=\"editarNombreAlumno('" + escapeHtml(est.id) + "','" + escapeHtml(est.nombre).replace(/'/g, "&#39;") + "')\" class='btn-secondary'>✏️ Nombre</button>" +
+          "<button onclick=\"cambiarEstadoAlumno('" + escapeHtml(est.id) + "'," + (!est.activo) + ")\" class='btn-secondary'>" + botonEstado + "</button>" +
+        "</div>";
+
+      container.appendChild(div);
+    });
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = '<div class="danger-box">Error cargando estudiantes.</div>';
+  }
+}
+
+
+/* =========================================================
+   ADMIN — EDITAR NOMBRE
+   ========================================================= */
+
+async function editarNombreAlumno(id, nombreActual) {
+
+  if (!db || !administradorActivo) {
+    alert("Debes iniciar sesión como administrador.");
+    return;
+  }
+
+  const nuevoNombre = prompt("Nuevo nombre del alumno:", nombreActual || "");
+  if (nuevoNombre === null) return;
+
+  const nombre = nuevoNombre.trim();
+  if (!nombre) {
+    alert("El nombre no puede quedar vacío.");
+    return;
+  }
+
+  try {
+    const { error } = await db.rpc("admin_actualizar_nombre", {
+      p_alumno_id: id,
+      p_nombre: nombre
+    });
+
+    if (error) {
+      console.error(error);
+      alert("No se pudo cambiar el nombre.\n\n" + error.message);
+      return;
+    }
+
+    await actualizarListaAdmin();
+    await cargarRanking();
+    alert("Nombre actualizado correctamente. ✏️");
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error cambiando el nombre.");
+  }
+}
+
+
+/* =========================================================
+   ADMIN — ACTIVAR / DESACTIVAR ALUMNO
+   ========================================================= */
+
+async function cambiarEstadoAlumno(id, activo) {
+
+  if (!db || !administradorActivo) {
+    alert("Debes iniciar sesión como administrador.");
+    return;
+  }
+
+  const accion = activo ? "activar" : "desactivar";
+  if (!confirm("¿Quieres " + accion + " a este alumno?")) return;
+
+  try {
+    const { error } = await db.rpc("admin_cambiar_estado_alumno", {
+      p_alumno_id: id,
+      p_activo: activo
+    });
+
+    if (error) {
+      console.error(error);
+      alert("No se pudo cambiar el estado.\n\n" + error.message);
+      return;
+    }
+
+    await actualizarListaAdmin();
+    await cargarRanking();
+    alert(activo ? "Alumno activado. 🟢" : "Alumno desactivado. 🔴");
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error cambiando el estado.");
+  }
+}
+
+
+/* =========================================================
+   ADMIN — SUMAR ESTRELLA
+   ========================================================= */
+
+async function sumarEstrella(id) {
+
+  await modificarEstrellas(
+    id,
+    1
+  );
+
+}
+
+
+/* =========================================================
+   ADMIN — RESTAR ESTRELLA
+   ========================================================= */
+
+async function restarEstrella(id) {
+
+  await modificarEstrellas(
+    id,
+    -1
+  );
+
+}
+
+
+/* =========================================================
+   MODIFICAR ESTRELLAS
+   ========================================================= */
+
+async function modificarEstrellas(id, cantidad) {
+
+  if (!db || !administradorActivo) {
+    alert("No tienes una sesión de administrador activa.");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.rpc("admin_modificar_estrellas", {
+      p_alumno_id: id,
+      p_cantidad: cantidad
+    });
+
+    if (error) {
+      console.error(error);
+      alert("No se pudieron actualizar las estrellas.\n\n" + error.message);
+      return;
+    }
+
+    await actualizarListaAdmin();
+    await actualizarResumenAdmin();
+    await cargarRanking();
+
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error actualizando las estrellas.");
+  }
+}
+
+
+/* =========================================================
+   ADMIN — RESUMEN
+   ========================================================= */
+
+async function actualizarResumenAdmin() {
+  if (!db || !administradorActivo) return;
+
+  try {
+    const [alumnosRes, tareasRes, entregasRes, estrellasRes] = await Promise.all([
+      db.from("alumnos").select("id", { count: "exact", head: true }),
+      db.from("tareas").select("id", { count: "exact", head: true }).eq("activa", true),
+      db.from("entregas").select("id", { count: "exact", head: true }),
+      db.from("alumnos").select("estrellas")
+    ]);
+
+    if (alumnosRes.error || tareasRes.error || entregasRes.error || estrellasRes.error) {
+      console.error("Error en resumen:", alumnosRes.error || tareasRes.error || entregasRes.error || estrellasRes.error);
+      return;
+    }
+
+    const totalEstrellas = (estrellasRes.data || []).reduce((sum, a) => sum + Number(a.estrellas || 0), 0);
+    document.getElementById("stat-students").textContent = alumnosRes.count ?? 0;
+    document.getElementById("stat-tasks").textContent = tareasRes.count ?? 0;
+    document.getElementById("stat-deliveries").textContent = entregasRes.count ?? 0;
+    document.getElementById("stat-stars").textContent = totalEstrellas;
+  } catch (e) {
+    console.error("Error actualizando resumen:", e);
+  }
+}
+
+/* =========================================================
+   ADMIN — ENTREGAS
+   ========================================================= */
+
+async function actualizarEntregasAdmin() {
+  if (!db || !administradorActivo) return;
+
+  const container = document.getElementById("admin-deliveries-list");
+  container.innerHTML = '<div class="loading">Cargando entregas...</div>';
+
+  try {
+    const { data, error } = await db
+      .from("entregas")
+      .select("id,alumno_id,tarea_id,entregada_at,alumnos(nombre,pin_transaccion),tareas(titulo,semana,estrellas)")
+      .order("entregada_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      container.innerHTML = '<div class="danger-box">No se pudieron cargar las entregas.</div>';
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p style="color:#6c757d;">Todavía no hay entregas registradas.</p>';
+      return;
+    }
+
+    container.innerHTML = "";
+    data.forEach(function(e) {
+      const alumno = e.alumnos || {};
+      const tarea = e.tareas || {};
+      const fecha = e.entregada_at ? new Date(e.entregada_at).toLocaleString("es-PA") : "Fecha no disponible";
+      const div = document.createElement("div");
+      div.className = "delivery-item";
+      div.innerHTML =
+        "<strong>✅ " + escapeHtml(alumno.nombre || "Alumno") + "</strong>" +
+        "<br><small>PIN: " + escapeHtml(alumno.pin_transaccion || "") + "</small>" +
+        "<br><span>📚 Semana " + Number(tarea.semana || 0) + " — " + escapeHtml(tarea.titulo || "Tarea") + "</span>" +
+        "<br><span class='badge'>+" + Number(tarea.estrellas || 0) + " ⭐</span>" +
+        "<br><small>🕒 " + escapeHtml(fecha) + "</small>";
+      container.appendChild(div);
+    });
+  } catch (e) {
+    console.error(e);
+    container.innerHTML = '<div class="danger-box">Error cargando las entregas.</div>';
+  }
+}
+
+/* =========================================================
+   REGISTRAR ALUMNO
+   ========================================================= */
+
+async function autorizarPinManual() {
+
+  if (!db || !administradorActivo) {
+    alert("Debes iniciar sesión como administrador.");
+    return;
+  }
+
+  const nombre = document.getElementById("new-name").value.trim();
+
+  if (!nombre) {
+    alert("Por favor escribe el nombre del alumno.");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.rpc("admin_crear_alumno", {
+      p_pin: null,
+      p_nombre: nombre
+    });
+
+    if (error) {
+      console.error(error);
+      alert("No se pudo registrar al alumno.\n\n" + error.message);
+      return;
+    }
+
+    const pinGenerado = data?.pin_transaccion || "";
+
+    alert(
+      "¡Alumno registrado correctamente! 🎉\n\n" +
+      "Alumno: " + nombre + "\n" +
+      "PIN: " + pinGenerado + "\n\n" +
+      "Guarda este PIN para entregárselo al alumno."
+    );
+
+    document.getElementById("new-name").value = "";
+
+    await actualizarListaAdmin();
+    await actualizarResumenAdmin();
+    await cargarRanking();
+
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error al registrar el alumno.");
+  }
+}
+
+
+/* =========================================================
+   ADMIN — CREAR TAREA
+   ========================================================= */
+
+async function crearTarea() {
+  if (!db || !administradorActivo) {
+    alert("Debes iniciar sesión como administrador.");
+    return;
+  }
+
+  const semana = parseInt(document.getElementById("task-week").value) || 1;
+  const titulo = document.getElementById("task-title").value.trim();
+  const descripcion = document.getElementById("task-desc").value.trim();
+  const estrellas = parseInt(document.getElementById("task-stars").value) || 1;
+
+  if (!titulo) {
+    alert("Por favor escribe el título de la tarea.");
+    return;
+  }
+  if (estrellas < 1) {
+    alert("La tarea debe tener al menos 1 estrella.");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.rpc("admin_crear_tarea", {
+      p_semana: semana,
+      p_titulo: titulo,
+      p_descripcion: descripcion,
+      p_estrellas: estrellas,
+      p_orden: null
+    });
+
+    if (error) {
+      console.error(error);
+      alert("No se pudo crear la tarea.\n\n" + error.message);
+      return;
+    }
+
+    alert(
+      "¡Tarea creada correctamente! 🌟\n\n" +
+      "Semana: " + Number(data?.semana || semana) + "\n" +
+      "Orden: " + Number(data?.orden || 1)
+    );
+
+    document.getElementById("task-title").value = "";
+    document.getElementById("task-desc").value = "";
+    document.getElementById("task-stars").value = "1";
+
+    await actualizarTareasAdmin();
+    await actualizarResumenAdmin();
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error creando la tarea.");
+  }
+}
+
+
+/* =========================================================
+   ADMIN — LISTA / EDICIÓN DE TAREAS
+   ========================================================= */
+
+async function actualizarTareasAdmin() {
+  if (!db || !administradorActivo) return;
+
+  const container = document.getElementById("admin-tasks-list");
+  container.innerHTML = '<div class="loading">Cargando tareas...</div>';
+
+  try {
+    const { data, error } = await db.rpc("admin_obtener_tareas");
+
+    if (error) {
+      console.error(error);
+      container.innerHTML = '<div class="danger-box">No se pudieron cargar las tareas.<br><small>' + escapeHtml(error.message || "") + '</small></div>';
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p style="color:#6c757d;">No has creado tareas aún.</p>';
+      return;
+    }
+
+    container.innerHTML = "";
+
+    data.forEach(function(t) {
+      const div = document.createElement("div");
+      div.className = "card-item";
+
+      const estado = t.activa ? "🟢 Activa" : "🔴 Inactiva";
+      const botonEstado = t.activa ? "🔴 Desactivar" : "🟢 Activar";
+
+      div.innerHTML =
+        "<div class='flex-between' style='gap:12px;align-items:flex-start;'>" +
+          "<div style='flex:1;'>" +
+            "<strong>📚 Semana " + Number(t.semana) + " · Tarea " + Number(t.orden) + "</strong>" +
+            "<br>" +
+            "<strong>" + escapeHtml(t.titulo) + "</strong>" +
+            "<br>" +
+            "<small>" + escapeHtml(t.descripcion || "") + "</small>" +
+            "<br>" +
+            "<span class='badge'>" + Number(t.estrellas) + " ⭐</span> " +
+            "<span class='small-text'>" + estado + "</span>" +
+          "</div>" +
+        "</div>" +
+        "<div style='display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;'>" +
+          "<button type='button' class='btn-edit-task'>✏️ Editar</button>" +
+          "<button type='button' class='btn-secondary btn-toggle-task'>" + botonEstado + "</button>" +
+        "</div>";
+
+      // No pasamos títulos/descripciones dentro de onclick.
+      // Así evitamos que comillas, apóstrofes o saltos de línea rompan el botón Editar.
+      const btnEditar = div.querySelector('.btn-edit-task');
+      btnEditar.addEventListener('click', function() {
+        editarTarea(
+          Number(t.id),
+          Number(t.semana),
+          Number(t.orden),
+          t.titulo || '',
+          t.descripcion || '',
+          Number(t.estrellas)
+        );
+      });
+
+      const btnEstado = div.querySelector('.btn-toggle-task');
+      btnEstado.addEventListener('click', function() {
+        cambiarEstadoTarea(Number(t.id), !t.activa);
+      });
+
+      container.appendChild(div);
+    });
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = '<div class="danger-box">Error cargando tareas.</div>';
+  }
+}
+
+
+async function editarTarea(id, semanaActual, ordenActual, tituloActual, descripcionActual, estrellasActual) {
+  if (!db || !administradorActivo) {
+    alert("Debes iniciar sesión como administrador.");
+    return;
+  }
+
+  const titulo = prompt("Título de la tarea:", tituloActual || "");
+  if (titulo === null) return;
+
+  const descripcion = prompt("Descripción / instrucciones:", descripcionActual || "");
+  if (descripcion === null) return;
+
+  const semanaTexto = prompt("Semana (1 a 4):", String(semanaActual));
+  if (semanaTexto === null) return;
+
+  const ordenTexto = prompt("Orden dentro de la semana:", String(ordenActual));
+  if (ordenTexto === null) return;
+
+  const estrellasTexto = prompt("Cantidad de estrellas:", String(estrellasActual));
+  if (estrellasTexto === null) return;
+
+  const semana = parseInt(semanaTexto, 10);
+  const orden = parseInt(ordenTexto, 10);
+  const estrellas = parseInt(estrellasTexto, 10);
+
+  if (!titulo.trim() || semana < 1 || semana > 4 || orden < 1 || estrellas < 1) {
+    alert("Revisa los datos. Semana 1–4, orden mínimo 1 y estrellas mínimo 1.");
+    return;
+  }
+
+  try {
+    const { error } = await db.rpc("admin_actualizar_tarea", {
+      p_tarea_id: id,
+      p_semana: semana,
+      p_orden: orden,
+      p_titulo: titulo.trim(),
+      p_descripcion: descripcion.trim(),
+      p_estrellas: estrellas
+    });
+
+    if (error) {
+      console.error(error);
+      alert("No se pudo editar la tarea.\n\n" + error.message);
+      return;
+    }
+
+    alert("Tarea actualizada correctamente. ✏️");
+    await actualizarTareasAdmin();
+    await actualizarResumenAdmin();
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error editando la tarea.");
+  }
+}
+
+
+async function cambiarEstadoTarea(id, activa) {
+  if (!db || !administradorActivo) {
+    alert("Debes iniciar sesión como administrador.");
+    return;
+  }
+
+  const accion = activa ? "activar" : "desactivar";
+  if (!confirm("¿Quieres " + accion + " esta tarea?")) return;
+
+  try {
+    const { error } = await db.rpc("admin_cambiar_estado_tarea", {
+      p_tarea_id: id,
+      p_activa: activa
+    });
+
+    if (error) {
+      console.error(error);
+      alert("No se pudo cambiar el estado de la tarea.\n\n" + error.message);
+      return;
+    }
+
+    await actualizarTareasAdmin();
+    await actualizarResumenAdmin();
+    alert(activa ? "Tarea activada. 🟢" : "Tarea desactivada. 🔴");
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error cambiando el estado de la tarea.");
+  }
+}
+
+
+/* =========================================================
+   ADMIN — BORRAR TAREA
+   ========================================================= */
+
+async function borrarTarea(id) {
+  alert("La eliminación de tareas se dejará para una etapa posterior para proteger el historial de entregas. Por ahora puedes desactivar la tarea. 🔒");
+}
+
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", configurarBotonesRankingSemana);
+</script>
+</body>
+</html>
