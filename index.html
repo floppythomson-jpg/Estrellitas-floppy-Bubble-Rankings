@@ -518,6 +518,17 @@
         "
       >
 
+      <!-- ================= CANJEAR CODIGO DE ESTRELLAS ================= -->
+      <div class="box" style="margin:18px 0;">
+        <h3>🎁 Canjear código de estrellas</h3>
+        <p>Escribe el código que recibiste para sumar estrellas a tu cuenta. Cada código se usa una sola vez.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <input id="redeem-star-code" type="text" placeholder="Ej. EST-ABCDE-FG234" autocomplete="off" maxlength="20" style="flex:1;min-width:190px;text-transform:uppercase;" />
+          <button id="redeem-star-code-btn" type="button" onclick="canjearCodigoEstrellas()">🎁 Canjear</button>
+        </div>
+        <div id="redeem-star-code-message" role="status" style="margin-top:10px;"></div>
+      </div>
+
       <!-- ================= RANKING AVANZADO ================= -->
 
       <h3>🏆 Ranking Estelar</h3>
@@ -1607,6 +1618,59 @@ function configurarBotonesRankingSemana() {
   }
 }
 
+
+/* =========================================================
+   CANJE SEGURO DE CODIGOS DE ESTRELLAS
+   ========================================================= */
+async function canjearCodigoEstrellas() {
+  const input = document.getElementById("redeem-star-code");
+  const button = document.getElementById("redeem-star-code-btn");
+  const message = document.getElementById("redeem-star-code-message");
+  const codigo = (input.value || "").trim().toUpperCase();
+
+  if (!alumnoActual || !alumnoActual.pin) {
+    message.textContent = "Inicia sesión para canjear un código.";
+    return;
+  }
+  if (!codigo) {
+    message.textContent = "Escribe el código que deseas canjear.";
+    input.focus();
+    return;
+  }
+
+  button.disabled = true;
+  message.textContent = "Verificando código...";
+  try {
+    const { data, error } = await db.rpc("canjear_codigo_estrellas", {
+      p_pin: alumnoActual.pin,
+      p_codigo: codigo
+    });
+    if (error) throw error;
+    const resultado = Array.isArray(data) ? data[0] : data;
+    if (!resultado || !resultado.success) throw new Error("No se pudo confirmar el canje.");
+
+    alumnoActual.estrellas = Number(resultado.total_estrellas || 0);
+    actualizarPerfilAlumno();
+    input.value = "";
+    message.textContent = "¡Listo! Sumaste " + Number(resultado.estrellas_ganadas) +
+      " ⭐. Ahora tienes " + Number(resultado.total_estrellas) + " ⭐ en total.";
+    await cargarProgresoAlumno();
+    await cargarRankingAvanzado();
+    await cargarRankingSemana(1);
+  } catch (error) {
+    console.error("Error al canjear código:", error);
+    const detalle = String(error.message || "");
+    if (detalle.toLowerCase().includes("ya fue canjeado")) {
+      message.textContent = "Este código ya fue canjeado y no se puede volver a utilizar.";
+    } else if (detalle.toLowerCase().includes("no existe") || detalle.toLowerCase().includes("no es válido")) {
+      message.textContent = "El código no es válido. Revísalo e inténtalo de nuevo.";
+    } else {
+      message.textContent = detalle || "No se pudo canjear el código. Inténtalo de nuevo.";
+    }
+  } finally {
+    button.disabled = false;
+  }
+}
 
 /*
   Compatibilidad con las funciones existentes del panel admin.
